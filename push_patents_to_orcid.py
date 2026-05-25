@@ -7,8 +7,8 @@ BEFORE RUNNING:
 2. Click "Register for the free ORCID public API"
 3. Fill in:
      Name:         NK Patent Uploader
-     Website URL:  https://localhost
-     Description:  Personal tool to upload patents
+     Website URL:  https://github.com/NarasimhaKamathB
+     Description:  Personal tool to upload patents to ORCID
      Redirect URI: https://narasimhakamathb.github.io/portfolio/callback.html
 4. Click Save — copy your CLIENT_ID and CLIENT_SECRET below.
 5. Run:  python push_patents_to_orcid.py
