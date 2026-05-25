@@ -6,6 +6,7 @@
 [![GitHub](https://img.shields.io/badge/GitHub-NarasimhaKamathB-181717?style=flat&logo=github)](https://github.com/NarasimhaKamathB)
 [![Email](https://img.shields.io/badge/Email-narasimha.kamath%40gmail.com-D14836?style=flat&logo=gmail)](mailto:narasimha.kamath@gmail.com)
 [![Google Scholar](https://img.shields.io/badge/Google_Scholar-Publications-4285F4?style=flat&logo=google-scholar)](https://scholar.google.com)
+[![ORCID](https://img.shields.io/badge/ORCID-0000--0002--3959--0541-A6CE39?style=flat&logo=orcid)](https://orcid.org/0000-0002-3959-0541)
 
 ---
 
