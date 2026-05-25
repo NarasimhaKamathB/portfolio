@@ -3,6 +3,7 @@
 **Global Technology Executive · AI & Agentic Platform Builder · R&D Leader · Cybersecurity Strategist**
 
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-narasimhakamath-0077B5?style=flat&logo=linkedin)](https://www.linkedin.com/in/narasimhakamath)
+[![GitHub](https://img.shields.io/badge/GitHub-NarasimhaKamathB-181717?style=flat&logo=github)](https://github.com/NarasimhaKamathB)
 [![Email](https://img.shields.io/badge/Email-narasimha.kamath%40gmail.com-D14836?style=flat&logo=gmail)](mailto:narasimha.kamath@gmail.com)
 [![Google Scholar](https://img.shields.io/badge/Google_Scholar-Publications-4285F4?style=flat&logo=google-scholar)](https://scholar.google.com)
 
