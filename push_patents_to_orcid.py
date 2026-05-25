@@ -6,27 +6,27 @@ BEFORE RUNNING:
 1. Go to https://orcid.org/developer-tools
 2. Click "Register for the free ORCID public API"
 3. Fill in:
-     Name:        NK Patent Uploader
-     Website URL: https://localhost
-     Description: Personal tool to upload patents
-     Redirect URI: http://localhost:8080/callback
+     Name:         NK Patent Uploader
+     Website URL:  https://localhost
+     Description:  Personal tool to upload patents
+     Redirect URI: https://localhost/callback     ← must be HTTPS
 4. Click Save — copy your CLIENT_ID and CLIENT_SECRET below.
 5. Run:  python push_patents_to_orcid.py
-6. Your browser will open — click Authorize — script does the rest.
+6. Your browser opens ORCID — click Authorize.
+7. Browser shows a "connection refused" error on https://localhost — that is expected.
+8. Copy the FULL URL from the address bar and paste it into the terminal prompt.
 """
 
 import json
-import threading
 import webbrowser
 import requests
-from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs, urlencode
 
 # ── CONFIG — fill these in after registering at orcid.org/developer-tools ──
 CLIENT_ID     = "APP-XXXXXXXXXXXXXXXX"   # replace with your client ID
 CLIENT_SECRET = "your-client-secret"     # replace with your client secret
 ORCID_ID      = "0000-0002-3959-0541"
-REDIRECT_URI  = "http://localhost:8080/callback"
+REDIRECT_URI  = "https://localhost/callback"
 # ────────────────────────────────────────────────────────────────────────────
 
 ORCID_AUTH_URL  = "https://orcid.org/oauth/authorize"
@@ -163,27 +163,6 @@ def build_patent_payload(patent):
     }
 
 
-# ── OAuth callback server ────────────────────────────────────────────────────
-auth_code = None
-
-class CallbackHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        global auth_code
-        params = parse_qs(urlparse(self.path).query)
-        auth_code = params.get("code", [None])[0]
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"<h2>Authorization successful! You can close this tab.</h2>")
-
-    def log_message(self, *args):
-        pass  # suppress access logs
-
-
-def start_callback_server():
-    server = HTTPServer(("localhost", 8080), CallbackHandler)
-    server.handle_request()  # handle one request then stop
-
-
 # ── Main flow ─────────────────────────────────────────────────────────────────
 def main():
     if CLIENT_ID.startswith("APP-XXX"):
@@ -191,11 +170,7 @@ def main():
         print("  Get them from: https://orcid.org/developer-tools\n")
         return
 
-    # 1. Start local callback server in background
-    thread = threading.Thread(target=start_callback_server, daemon=True)
-    thread.start()
-
-    # 2. Open browser for user authorization
+    # 1. Open browser for user authorization
     params = {
         "client_id":     CLIENT_ID,
         "response_type": "code",
@@ -203,16 +178,21 @@ def main():
         "redirect_uri":  REDIRECT_URI,
     }
     auth_url = f"{ORCID_AUTH_URL}?{urlencode(params)}"
-    print(f"\nOpening ORCID authorization in your browser...")
+    print("\nOpening ORCID authorization in your browser...")
+    print("After clicking 'Authorize', your browser will show a connection error")
+    print("on https://localhost — that is EXPECTED and fine.\n")
     webbrowser.open(auth_url)
 
-    # 3. Wait for callback
-    thread.join(timeout=120)
+    # 2. User pastes the full redirect URL from their browser address bar
+    print("Copy the FULL URL from your browser address bar and paste it here:")
+    redirect_url = input("  URL: ").strip()
+    params_out = parse_qs(urlparse(redirect_url).query)
+    auth_code = params_out.get("code", [None])[0]
     if not auth_code:
-        print("ERROR: Did not receive authorization code within 2 minutes.")
+        print("\nERROR: Could not find 'code=' in the URL. Please try again.")
         return
 
-    # 4. Exchange code for access token
+    # 3. Exchange code for access token
     print("Authorization received. Exchanging for access token...")
     token_resp = requests.post(ORCID_TOKEN_URL, data={
         "client_id":     CLIENT_ID,
