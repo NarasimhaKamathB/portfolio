@@ -9,7 +9,7 @@ BEFORE RUNNING:
      Name:         NK Patent Uploader
      Website URL:  https://localhost
      Description:  Personal tool to upload patents
-     Redirect URI: https://localhost/callback     ← must be HTTPS
+     Redirect URI: https://narasimhakamathb.github.io/portfolio/callback.html
 4. Click Save — copy your CLIENT_ID and CLIENT_SECRET below.
 5. Run:  python push_patents_to_orcid.py
 6. Your browser opens ORCID — click Authorize.
@@ -26,7 +26,7 @@ from urllib.parse import urlparse, parse_qs, urlencode
 CLIENT_ID     = "APP-XXXXXXXXXXXXXXXX"   # replace with your client ID
 CLIENT_SECRET = "your-client-secret"     # replace with your client secret
 ORCID_ID      = "0000-0002-3959-0541"
-REDIRECT_URI  = "https://localhost/callback"
+REDIRECT_URI  = "https://narasimhakamathb.github.io/portfolio/callback.html"
 # ────────────────────────────────────────────────────────────────────────────
 
 ORCID_AUTH_URL  = "https://orcid.org/oauth/authorize"
@@ -179,17 +179,27 @@ def main():
     }
     auth_url = f"{ORCID_AUTH_URL}?{urlencode(params)}"
     print("\nOpening ORCID authorization in your browser...")
-    print("After clicking 'Authorize', your browser will show a connection error")
-    print("on https://localhost — that is EXPECTED and fine.\n")
+    print("After clicking 'Authorize', you will land on your GitHub Pages callback page.\n")
     webbrowser.open(auth_url)
 
-    # 2. User pastes the full redirect URL from their browser address bar
-    print("Copy the FULL URL from your browser address bar and paste it here:")
-    redirect_url = input("  URL: ").strip()
-    params_out = parse_qs(urlparse(redirect_url).query)
-    auth_code = params_out.get("code", [None])[0]
+    # 2. User copies code from GitHub Pages callback page
+    print("The GitHub Pages callback page will show your authorization code.")
+    print("Click 'Copy to clipboard' on that page, then paste the code here:")
+    redirect_url = input("  Paste the full URL or just the code: ").strip()
+    # accept either the full URL or just the bare code
+    if redirect_url.startswith("http"):
+        pass  # will be parsed below
+    else:
+        auth_code = redirect_url
+        auth_code = auth_code if auth_code else None
+        if auth_code:
+            # skip URL parsing, go straight to token exchange
+            pass
+    if redirect_url.startswith("http"):
+        params_out = parse_qs(urlparse(redirect_url).query)
+        auth_code = params_out.get("code", [None])[0]
     if not auth_code:
-        print("\nERROR: Could not find 'code=' in the URL. Please try again.")
+        print("\nERROR: Could not find the authorization code. Please try again.")
         return
 
     # 3. Exchange code for access token
